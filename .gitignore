@@ -1,0 +1,18 @@
+# dependências e build
+node_modules
+dist
+*.tsbuildinfo
+
+# originais de imagem (não versionados; usados só por `npm run images`)
+_ref
+
+# variáveis de ambiente
+.env
+.env.*
+!.env.example
+
+# sistema e editor
+.DS_Store
+Thumbs.db
+.vscode
+.idea
