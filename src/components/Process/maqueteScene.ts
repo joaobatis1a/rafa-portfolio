@@ -269,9 +269,10 @@ export function createMaquete(container: HTMLElement, canvas: HTMLCanvasElement)
 
   function placeCamera() {
     // Em telas largas a maquete se desloca para a direita, deixando o texto à esquerda livre
-    const wide = camera.aspect > 1.45
-    pivot.position.x = wide ? 3.6 : 0
-    const dist = wide ? 31 : camera.aspect < 1.2 ? 33 : 25
+    const wide = camera.aspect > 1.1
+    const wider = camera.aspect > 1.6
+    pivot.position.x = wider ? 3.6 : wide ? 1.6 : 0
+    const dist = wider ? 31 : wide ? 35 : camera.aspect < 1.2 ? 33 : 25
     const el = 0.92 + tilt
     camera.position.set(0, Math.sin(el) * dist, Math.cos(el) * dist)
     camera.lookAt(0, 0.4, wide ? 1.4 : 0.4)

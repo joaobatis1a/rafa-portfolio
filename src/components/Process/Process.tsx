@@ -1,7 +1,7 @@
 import { Suspense, lazy, useCallback, useRef, useState } from 'react'
 import { AnimatePresence, m, useInView, useMotionValueEvent, useReducedMotion, useScroll } from 'framer-motion'
 import { processSteps } from '../../data/services'
-import { Reveal, RevealLines } from '../ui/Reveal'
+import { RevealLines } from '../ui/Reveal'
 import { Cota } from '../ui/Cota'
 import { PlanDrawing } from './PlanDrawing'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
@@ -11,12 +11,12 @@ import { ease } from '../../animations/variants'
 const Maquete3D = lazy(() => import('./Maquete3D'))
 const total = processSteps.length
 
-function Heading({ className = '' }: { className?: string }) {
+function Heading() {
   return (
-    <div className={className}>
+    <div>
       <Cota label="Processo" className="max-w-xs text-graphite" />
       <RevealLines
-        className="display mt-8 text-[clamp(2.4rem,4vw,4rem)]"
+        className="display mt-6 text-[clamp(2.4rem,4vw,4rem)] md:mt-8"
         lines={['Do espaço vazio', <em key="e">ao projeto pronto.</em>]}
       />
     </div>
@@ -24,11 +24,13 @@ function Heading({ className = '' }: { className?: string }) {
 }
 
 /**
- * Desktop: a maquete ocupa a tela e fica fixa enquanto a rolagem avança as etapas.
- * Sem WebGL ou com movimento reduzido, a prancha desenhada ocupa o mesmo lugar.
+ * Um único formato para todos os tamanhos de tela: a ilustração fica fixa enquanto a rolagem
+ * avança as etapas. No desktop a ilustração é a maquete 3D; no mobile, a prancha desenhada.
+ * Sem WebGL, com movimento reduzido ou no celular, a prancha ocupa o mesmo lugar.
  */
-function ProcessPinned() {
+export function Process() {
   const reduce = useReducedMotion()
+  const desktop = useMediaQuery('(min-width: 768px)')
   const { scrollTo } = useSmoothScroll()
   const trackRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
@@ -37,11 +39,11 @@ function ProcessPinned() {
     setActive(Math.min(total - 1, Math.max(0, Math.floor(v * total)))),
   )
 
-  // Three.js só é baixado quando a seção se aproxima
+  // Three.js só é baixado no desktop, quando a seção se aproxima
   const near = useInView(trackRef, { once: true, margin: '800px 0px 800px 0px' })
   const [failed, setFailed] = useState(false)
   const onFail = useCallback(() => setFailed(true), [])
-  const use3D = near && !reduce && !failed
+  const use3D = desktop && near && !reduce && !failed
 
   const jump = (i: number) => {
     const el = trackRef.current
@@ -53,14 +55,14 @@ function ProcessPinned() {
   const stage = active + 1
   const step = processSteps[active]
   const plan = (
-    <div className="absolute inset-0 grid place-items-center pb-16 pl-[34%] pr-10 pt-28">
-      <PlanDrawing stage={stage} className="max-h-[64svh]" />
+    <div className="absolute inset-x-0 top-[26svh] bottom-[36svh] grid place-items-center px-5 md:inset-0 md:bottom-0 md:px-0 md:pb-16 md:pl-[34%] md:pr-10 md:pt-28">
+      <PlanDrawing stage={stage} className="w-full md:max-h-[64svh]" />
     </div>
   )
 
   return (
     <section id="processo" className="relative bg-paper">
-      <div ref={trackRef} id="processo-trilha" className="relative h-[460svh]">
+      <div ref={trackRef} id="processo-trilha" className="relative h-[320svh] md:h-[460svh]">
         <div className="sticky top-0 h-[100svh] overflow-hidden">
           {use3D ? (
             <Suspense fallback={plan}>
@@ -71,14 +73,16 @@ function ProcessPinned() {
           )}
 
           {/* Título */}
-          <div className="pointer-events-none absolute inset-x-0 top-0">
-            <Heading className="mx-auto max-w-[1600px] px-10 pt-28" />
+          <div className="pointer-events-none absolute inset-x-0 top-0 px-5 pt-24 md:px-10 md:pt-28">
+            <div className="mx-auto max-w-[1600px]">
+              <Heading />
+            </div>
           </div>
 
           {/* Etapa atual + navegação */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0">
-            <div className="mx-auto flex max-w-[1600px] items-end justify-between gap-10 px-10 pb-12">
-              <div aria-live="polite" className="min-h-[13rem] max-w-sm">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-8 md:px-10 md:pb-12">
+            <div className="mx-auto flex max-w-[1600px] flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
+              <div aria-live="polite" className="min-h-[9.5rem] max-w-sm md:min-h-[13rem]">
                 <AnimatePresence mode="wait">
                   <m.div
                     key={active}
@@ -87,16 +91,16 @@ function ProcessPinned() {
                     exit={reduce ? undefined : { opacity: 0, y: -10 }}
                     transition={{ duration: 0.5, ease }}
                   >
-                    <p className="font-serif text-7xl leading-none text-taupe lining-nums">{step.number}</p>
-                    <h3 className="mt-4 font-serif text-4xl leading-tight">{step.title}</h3>
-                    <p className="mt-3 text-sm leading-relaxed text-graphite/85">{step.description}</p>
+                    <p className="font-serif text-5xl leading-none text-taupe lining-nums md:text-7xl">{step.number}</p>
+                    <h3 className="mt-3 font-serif text-3xl leading-tight md:mt-4 md:text-4xl">{step.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-graphite/85 md:mt-3">{step.description}</p>
                   </m.div>
                 </AnimatePresence>
               </div>
 
-              <div className="pointer-events-auto flex flex-col items-end gap-4">
-                {use3D && <p className="eyebrow text-graphite/60">Arraste para girar</p>}
-                <div className="flex w-56 gap-1.5">
+              <div className="pointer-events-auto flex flex-col gap-4 md:items-end">
+                {use3D && <p className="eyebrow text-graphite/60 md:text-right">Arraste para girar</p>}
+                <div className="flex w-full gap-1.5 md:w-56">
                   {processSteps.map((s, i) => (
                     <button
                       key={s.number}
@@ -121,40 +125,4 @@ function ProcessPinned() {
       </div>
     </section>
   )
-}
-
-/** No mobile cada etapa traz sua própria prancha, que se desenha ao entrar na tela. */
-function InlinePlan({ stage }: { stage: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const seen = useInView(ref, { once: true, margin: '0px 0px -20% 0px' })
-  return (
-    <div ref={ref} className="mt-8">
-      <PlanDrawing stage={seen ? stage : 0} />
-    </div>
-  )
-}
-
-function ProcessList() {
-  return (
-    <section id="processo" className="relative bg-paper px-5 py-28">
-      <Heading className="mb-14" />
-      <ol>
-        {processSteps.map((s, i) => (
-          <li key={s.number} className="border-t border-obsidian/15 py-10">
-            <Reveal>
-              <p className="font-serif text-6xl leading-none text-taupe lining-nums">{s.number}</p>
-              <h3 className="mt-4 font-serif text-3xl leading-tight">{s.title}</h3>
-              <p className="mt-3 leading-relaxed text-graphite/85">{s.description}</p>
-            </Reveal>
-            <InlinePlan stage={i + 1} />
-          </li>
-        ))}
-      </ol>
-    </section>
-  )
-}
-
-export function Process() {
-  const desktop = useMediaQuery('(min-width: 768px)')
-  return desktop ? <ProcessPinned /> : <ProcessList />
 }
