@@ -21,7 +21,7 @@ export function Button({ variant = 'solid', children, arrow = true, className = 
   return (
     <a
       {...rest}
-      className={`group inline-flex min-h-12 items-center gap-3 px-7 py-4 eyebrow transition-colors duration-500 ease-editorial ${styles[variant]} ${className}`}
+      className={`group inline-flex min-h-12 items-center gap-3 whitespace-nowrap px-7 py-4 eyebrow transition-colors duration-500 ease-editorial ${styles[variant]} ${className}`}
     >
       <span>{children}</span>
       {arrow && (
