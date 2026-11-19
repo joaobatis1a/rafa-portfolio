@@ -38,6 +38,7 @@ export function Services() {
             <Reveal as="li" key={s.number} delay={Math.min(i * 0.05, 0.2)} y={20}>
               <div
                 onMouseEnter={() => setActive(i)}
+                onClick={() => setActive(i)}
                 className={`grid cursor-default grid-cols-[2.5rem_1fr] gap-x-4 border-t border-ivory/15 py-8 transition-opacity duration-500 md:grid-cols-[4rem_1.2fr_1fr] md:gap-x-8 md:py-10 ${
                   i === services.length - 1 ? 'border-b' : ''
                 } ${active !== null && active !== i ? 'opacity-35' : ''}`}
@@ -57,6 +58,27 @@ export function Services() {
             </Reveal>
           ))}
         </ol>
+
+        {/* Prévia no toque: o render do serviço selecionado aparece abaixo da lista (em telas largas, o cursor faz esse papel) */}
+        <div className="relative col-span-full mt-4 aspect-[4/5] overflow-hidden bg-graphite lg:hidden">
+          {previews.map((name) => (
+            <img
+              key={name}
+              src={`/img/${name}-640.avif`}
+              alt=""
+              loading="lazy"
+              decoding="async"
+              width={640}
+              height={800}
+              className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-700 ease-editorial ${
+                current === name ? 'opacity-100' : 'opacity-0'
+              }`}
+            />
+          ))}
+          {active === null && (
+            <p className="eyebrow absolute inset-x-0 bottom-5 text-center text-sand/80">Toque em um serviço para ver o render</p>
+          )}
+        </div>
       </div>
 
       {/* Prévia que acompanha o cursor (somente com mouse, em telas largas) */}
