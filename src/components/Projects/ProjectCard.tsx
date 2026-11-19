@@ -65,7 +65,7 @@ export function ProjectCard({ project, className = '', aspect, sizes, onOpen, on
             </ul>
           </div>
           {/* Em telas de toque não há cursor: o "+" indica que o projeto abre */}
-          <span className="absolute right-4 top-4 grid size-11 place-items-center rounded-full bg-ivory text-obsidian [@media(hover:hover)]:hidden">
+          <span className="absolute right-4 top-4 grid size-11 place-items-center bg-ivory text-obsidian [@media(hover:hover)]:hidden">
             <Plus size={18} aria-hidden />
           </span>
         </m.div>

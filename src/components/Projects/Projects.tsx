@@ -75,7 +75,7 @@ export function Projects() {
         className="pointer-events-none fixed left-0 top-0 z-30 hidden [@media(hover:hover)]:block"
       >
         <m.span
-          className="eyebrow -ml-12 -mt-12 grid size-24 place-items-center rounded-full bg-ivory text-obsidian"
+          className="eyebrow -ml-12 -mt-12 grid size-24 place-items-center bg-ivory text-obsidian"
           initial={false}
           animate={{ scale: hovering ? 1 : 0, opacity: hovering ? 1 : 0 }}
           transition={{ duration: 0.45, ease }}

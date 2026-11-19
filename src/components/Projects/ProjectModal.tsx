@@ -87,7 +87,7 @@ export function ProjectModal({ project, onClose, onNavigate }: Props) {
             type="button"
             onClick={onClose}
             aria-label="Fechar projeto"
-            className="grid size-12 place-items-center rounded-full transition-colors hover:bg-obsidian hover:text-ivory"
+            className="grid size-12 place-items-center transition-colors hover:bg-obsidian hover:text-ivory"
           >
             <X size={22} />
           </button>
