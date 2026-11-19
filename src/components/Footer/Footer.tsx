@@ -64,7 +64,7 @@ export function Footer() {
         <p aria-label={site.name} className="@container mt-20 overflow-hidden md:mt-28">
           <m.span
             aria-hidden
-            className="block whitespace-nowrap text-center font-serif text-[16.2cqw] leading-[0.95] tracking-[-0.02em]"
+            className="block whitespace-nowrap text-center font-serif text-[17.4cqw] leading-[0.95] tracking-[-0.02em]"
             initial={reduce ? false : { y: '100%' }}
             whileInView={{ y: 0 }}
             viewport={viewportOnce}
