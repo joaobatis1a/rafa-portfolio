@@ -45,10 +45,12 @@ export interface Maquete {
 }
 
 export function createMaquete(container: HTMLElement, canvas: HTMLCanvasElement): Maquete {
-  const renderer = new WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' })
-  // 1.5 é visualmente indistinguível de 2 nesta cena e reduz bastante o custo por quadro
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5))
-  renderer.shadowMap.enabled = true
+  // Celular: resolução e sombras reduzidas, para manter a animação fluida em GPUs móveis
+  const mobile = window.matchMedia('(max-width: 767px)').matches
+  const renderer = new WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' })
+  // 1.5 é visualmente indistinguível de 2 nesta cena; no celular, 1.25
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.25 : 1.5))
+  renderer.shadowMap.enabled = !mobile
   renderer.shadowMap.type = PCFShadowMap
 
   const scene = new Scene()
@@ -272,7 +274,7 @@ export function createMaquete(container: HTMLElement, canvas: HTMLCanvasElement)
     const wide = camera.aspect > 1.1
     const wider = camera.aspect > 1.6
     pivot.position.x = wider ? 3.6 : wide ? 1.6 : 0
-    const dist = wider ? 31 : wide ? 35 : camera.aspect < 1.2 ? 33 : 25
+    const dist = wider ? 31 : wide ? 35 : camera.aspect < 1.2 ? 39 : 25
     const el = 0.92 + tilt
     camera.position.set(0, Math.sin(el) * dist, Math.cos(el) * dist)
     camera.lookAt(0, 0.4, wide ? 1.4 : 0.4)

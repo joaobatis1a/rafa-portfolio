@@ -5,7 +5,6 @@ import { RevealLines } from '../ui/Reveal'
 import { Cota } from '../ui/Cota'
 import { PlanDrawing } from './PlanDrawing'
 import { useSmoothScroll } from '../../hooks/useSmoothScroll'
-import { useMediaQuery } from '../../hooks/useMediaQuery'
 import { ease } from '../../animations/variants'
 
 const Maquete3D = lazy(() => import('./Maquete3D'))
@@ -25,12 +24,11 @@ function Heading() {
 
 /**
  * Um único formato para todos os tamanhos de tela: a ilustração fica fixa enquanto a rolagem
- * avança as etapas. No desktop a ilustração é a maquete 3D; no mobile, a prancha desenhada.
+ * avança as etapas. A ilustração é a maquete 3D (com WebGL); sem WebGL ou com movimento reduzido, a prancha.
  * Sem WebGL, com movimento reduzido ou no celular, a prancha ocupa o mesmo lugar.
  */
 export function Process() {
   const reduce = useReducedMotion()
-  const desktop = useMediaQuery('(min-width: 768px)')
   const { scrollTo } = useSmoothScroll()
   const trackRef = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(0)
@@ -39,11 +37,11 @@ export function Process() {
     setActive(Math.min(total - 1, Math.max(0, Math.floor(v * total)))),
   )
 
-  // Three.js só é baixado no desktop, quando a seção se aproxima
+  // Three.js só é baixado quando a seção se aproxima (em qualquer tela)
   const near = useInView(trackRef, { once: true, margin: '800px 0px 800px 0px' })
   const [failed, setFailed] = useState(false)
   const onFail = useCallback(() => setFailed(true), [])
-  const use3D = desktop && near && !reduce && !failed
+  const use3D = near && !reduce && !failed
 
   const jump = (i: number) => {
     const el = trackRef.current
@@ -54,25 +52,24 @@ export function Process() {
 
   const stage = active + 1
   const step = processSteps[active]
-  // Mobile: a prancha divide a coluna com o título e o texto (sem sobreposição em telas baixas).
-  // Desktop: ocupa a tela, deslocada para a direita.
-  const plan = (
-    <div className="order-2 grid min-h-0 flex-1 place-items-center px-5 py-4 md:absolute md:order-none md:inset-0 md:px-0 md:pb-16 md:pl-[34%] md:pr-10 md:pt-28">
-      <PlanDrawing stage={stage} className="h-full max-h-full w-auto max-w-full md:h-auto md:w-full md:max-h-[64svh]" />
-    </div>
-  )
+  // Área da ilustração (maquete 3D ou prancha). No mobile divide a coluna com o título e o texto;
+  // no desktop ocupa a tela, deslocada para a direita. Os filhos absolutos usam o mesmo espaço.
+  const slot = 'order-2 relative grid min-h-0 flex-1 place-items-center px-5 py-4 md:absolute md:inset-0 md:order-none md:px-0 md:pb-16 md:pl-[34%] md:pr-10 md:pt-28'
+  const planEl = <PlanDrawing stage={stage} className="h-full max-h-full w-auto max-w-full md:h-auto md:w-full md:max-h-[64svh]" />
 
   return (
     <section id="processo" className="relative bg-paper">
       <div ref={trackRef} id="processo-trilha" className="relative h-[320svh] md:h-[460svh]">
         <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden md:block">
-          {use3D ? (
-            <Suspense fallback={plan}>
-              <Maquete3D stage={stage} onFail={onFail} className="absolute inset-0" />
-            </Suspense>
-          ) : (
-            plan
-          )}
+          <div className={slot}>
+            {use3D ? (
+              <Suspense fallback={planEl}>
+                <Maquete3D stage={stage} onFail={onFail} className="absolute inset-x-5 inset-y-4 md:inset-0" />
+              </Suspense>
+            ) : (
+              planEl
+            )}
+          </div>
 
           {/* Título */}
           <div className="pointer-events-none order-1 shrink-0 px-5 pt-20 md:absolute md:order-none md:inset-x-0 md:top-0 md:px-10 md:pt-28">
