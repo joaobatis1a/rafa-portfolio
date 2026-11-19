@@ -54,16 +54,18 @@ export function Process() {
 
   const stage = active + 1
   const step = processSteps[active]
+  // Mobile: a prancha divide a coluna com o título e o texto (sem sobreposição em telas baixas).
+  // Desktop: ocupa a tela, deslocada para a direita.
   const plan = (
-    <div className="absolute inset-x-0 top-[26svh] bottom-[36svh] grid place-items-center px-5 md:inset-0 md:bottom-0 md:px-0 md:pb-16 md:pl-[34%] md:pr-10 md:pt-28">
-      <PlanDrawing stage={stage} className="w-full md:max-h-[64svh]" />
+    <div className="order-2 grid min-h-0 flex-1 place-items-center px-5 py-4 md:absolute md:order-none md:inset-0 md:px-0 md:pb-16 md:pl-[34%] md:pr-10 md:pt-28">
+      <PlanDrawing stage={stage} className="h-full max-h-full w-auto max-w-full md:h-auto md:w-full md:max-h-[64svh]" />
     </div>
   )
 
   return (
     <section id="processo" className="relative bg-paper">
       <div ref={trackRef} id="processo-trilha" className="relative h-[320svh] md:h-[460svh]">
-        <div className="sticky top-0 h-[100svh] overflow-hidden">
+        <div className="sticky top-0 flex h-[100svh] flex-col overflow-hidden md:block">
           {use3D ? (
             <Suspense fallback={plan}>
               <Maquete3D stage={stage} onFail={onFail} className="absolute inset-0" />
@@ -73,14 +75,14 @@ export function Process() {
           )}
 
           {/* Título */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 px-5 pt-24 md:px-10 md:pt-28">
+          <div className="pointer-events-none order-1 shrink-0 px-5 pt-20 md:absolute md:order-none md:inset-x-0 md:top-0 md:px-10 md:pt-28">
             <div className="mx-auto max-w-[1600px]">
               <Heading />
             </div>
           </div>
 
           {/* Etapa atual + navegação */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 px-5 pb-8 md:px-10 md:pb-12">
+          <div className="pointer-events-none order-3 shrink-0 px-5 pb-6 pt-2 md:absolute md:order-none md:inset-x-0 md:bottom-0 md:px-10 md:pb-12">
             <div className="mx-auto flex max-w-[1600px] flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
               <div aria-live="polite" className="min-h-[9.5rem] max-w-sm md:min-h-[13rem]">
                 <AnimatePresence mode="wait">

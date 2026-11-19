@@ -7,7 +7,7 @@ import { ease } from '../../animations/variants'
  * É uma ilustração genérica do método, não a planta de nenhum projeto real.
  * stage 0 = prancha em branco … 5 = prancha completa.
  */
-export function PlanDrawing({ stage, className = '' }: { stage: number; className?: string }) {
+export function PlanDrawing({ stage, className = 'h-auto w-full' }: { stage: number; className?: string }) {
   const reduce = useReducedMotion()
   const hatch = useId()
   const arrow = useId()
@@ -34,7 +34,7 @@ export function PlanDrawing({ stage, className = '' }: { stage: number; classNam
   const lights = [[130, 112], [230, 112], [330, 112], [430, 112], [140, 205], [350, 215], [440, 205], [420, 290]]
 
   return (
-    <svg viewBox="0 0 600 420" role="img" aria-label="Planta esquemática que ganha detalhes a cada etapa do processo" className={`h-auto w-full text-obsidian ${className}`}>
+    <svg viewBox="0 0 600 420" role="img" aria-label="Planta esquemática que ganha detalhes a cada etapa do processo" className={`text-obsidian ${className}`}>
       <defs>
         <pattern id={hatch} width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
           <line x1="0" y1="0" x2="0" y2="5" stroke="currentColor" strokeWidth="1" />
